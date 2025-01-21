@@ -35,11 +35,7 @@
         "type": "git",
         "url": "git+ssh://git@github.com/runejs/common.git"
     },
-    "keywords": [
-        "runejs",
-        "runescape",
-        "typescript"
-    ],
+    "keywords": ["runejs", "runescape", "typescript"],
     "author": "Kikorono",
     "license": "GPL-3.0",
     "bugs": {

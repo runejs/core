@@ -1,5 +1,5 @@
 export enum ConnectionStatus {
     HANDSHAKE = 'handshake',
     ACTIVE = 'active',
-    CLOSED = 'closed'
+    CLOSED = 'closed',
 }

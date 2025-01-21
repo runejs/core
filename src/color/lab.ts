@@ -2,23 +2,18 @@ import { Color } from './color';
 import { RGB } from './rgb';
 import { fixedFloor, pad } from '../util';
 
-
 export abstract class LABValues extends Color<LABValues> {
-
     public l: number;
     public a: number;
     public b: number;
 
     abstract toString();
-
 }
-
 
 /**
  * A color within the LAB color space.
  */
 export class LAB extends LABValues {
-
     /**
      * The RGB equivalent of this color, if provided during instantiation.
      */
@@ -45,10 +40,15 @@ export class LAB extends LABValues {
      */
     public constructor(lightness: number, a: number, b: number, alpha?: number);
 
-    public constructor(arg0: number | RGB, a?: number, b?: number, alpha = 255) {
+    public constructor(
+        arg0: number | RGB,
+        a?: number,
+        b?: number,
+        alpha = 255,
+    ) {
         super('hcl');
         let lightness = arg0;
-        if(a === undefined && b === undefined) {
+        if (a === undefined && b === undefined) {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { l, a: a2, b: b2 } = LAB.fromRgb(this.rgb);
             lightness = l;
@@ -68,28 +68,28 @@ export class LAB extends LABValues {
      * @param rgb The RGB(A) color to convert into LAB.
      */
     public static fromRgb(rgb: RGB): Partial<LABValues> {
-        if(rgb.isPureBlack) {
+        if (rgb.isPureBlack) {
             return { l: 0, a: 0, b: 0 };
         }
 
         let { r, g, b } = rgb.decimalValues;
 
-        r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-        g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-        b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+        r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+        g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+        b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
 
         let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
-        let y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+        let y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.0;
         let z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
 
-        x = (x > 0.008856) ? Math.pow(x, 1/3) : (7.787 * x) + 16 / 116;
-        y = (y > 0.008856) ? Math.pow(y, 1/3) : (7.787 * y) + 16 / 116;
-        z = (z > 0.008856) ? Math.pow(z, 1/3) : (7.787 * z) + 16 / 116;
+        x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116;
+        y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116;
+        z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116;
 
         return {
-            l: fixedFloor((116 * y) - 16, 1),
+            l: fixedFloor(116 * y - 16, 1),
             a: fixedFloor(500 * (x - y), 1),
-            b: fixedFloor(200 * (y - z), 1)
+            b: fixedFloor(200 * (y - z), 1),
         };
     }
 
@@ -116,16 +116,20 @@ export class LAB extends LABValues {
         deltaH = deltaH < 0 ? 0 : Math.sqrt(deltaH);
         const sc = 1.0 + 0.045 * c1;
         const sh = 1.0 + 0.015 * c1;
-        const deltaLKlsl = deltaL / (1.0);
-        const deltaCkcsc = deltaC / (sc);
-        const deltaHkhsh = deltaH / (sh);
-        const i = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+        const deltaLKlsl = deltaL / 1.0;
+        const deltaCkcsc = deltaC / sc;
+        const deltaHkhsh = deltaH / sh;
+        const i =
+            deltaLKlsl * deltaLKlsl +
+            deltaCkcsc * deltaCkcsc +
+            deltaHkhsh * deltaHkhsh;
         return i < 0 ? 0 : Math.sqrt(i);
     }
 
     public toString(): string {
-        return `LAB(A) ( ${pad(this.l, 3)}%, ${pad(this.a, 3)}, ` +
-            `${pad(this.b, 3)}, ${pad(this.alpha, 3)} )`;
+        return (
+            `LAB(A) ( ${pad(this.l, 3)}%, ${pad(this.a, 3)}, ` +
+            `${pad(this.b, 3)}, ${pad(this.alpha, 3)} )`
+        );
     }
-
 }

@@ -3,9 +3,7 @@ import { ByteBuffer } from './buffer';
 import { logger } from './index';
 import { Socket } from 'net';
 
-
 class TestConnectionHandler extends SocketServer {
-
     public decodeMessage(data: ByteBuffer): void {
         logger.info(`Data received:`, data.get('string'));
         logger.info(data.get('long').toString());
@@ -20,7 +18,6 @@ class TestConnectionHandler extends SocketServer {
     public connectionDestroyed(): void {
         logger.info(`Connection destroyed.`);
     }
-
 }
 
 function launchTestServer() {
@@ -28,12 +25,17 @@ function launchTestServer() {
 
     const TEST_PORT = 8000;
 
-    const server = SocketServer.launch('Test Server', '0.0.0.0', TEST_PORT, socket =>
-        new TestConnectionHandler(socket, {
-            timeout: 300,
-            keepAlive: false,
-            handshakeRequired: false
-        }));
+    const server = SocketServer.launch(
+        'Test Server',
+        '0.0.0.0',
+        TEST_PORT,
+        (socket) =>
+            new TestConnectionHandler(socket, {
+                timeout: 300,
+                keepAlive: false,
+                handshakeRequired: false,
+            }),
+    );
 
     const speakySocket = new Socket();
     speakySocket.connect(TEST_PORT);

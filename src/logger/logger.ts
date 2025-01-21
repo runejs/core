@@ -1,8 +1,8 @@
 import pino, { Logger, LoggerOptions, TimeFn } from 'pino';
 import SonicBoom from 'sonic-boom';
 
-
-export const LOGGER_DEFAULT_TIME_FN: true | TimeFn = pino.stdTimeFunctions.isoTime;
+export const LOGGER_DEFAULT_TIME_FN: true | TimeFn =
+    pino.stdTimeFunctions.isoTime;
 
 /**
  * The main RuneJS wrapper class for the Pino logger.
@@ -10,7 +10,6 @@ export const LOGGER_DEFAULT_TIME_FN: true | TimeFn = pino.stdTimeFunctions.isoTi
  * @see https://www.npmjs.com/package/sonic-boom
  */
 export class RuneLogger {
-
     /**
      * The logger's active date/time format function for log messages.
      * IE timestamp: () => `,"time":"${new Date(Date.now()).toISOString()}"`
@@ -24,13 +23,13 @@ export class RuneLogger {
 
     private _options: LoggerOptions = {
         timestamp: this.loggerTimeFn,
-        prettyPrint: true
+        prettyPrint: true,
     };
 
     private _boom: SonicBoom;
 
     public constructor(options?: LoggerOptions) {
-        if(options) {
+        if (options) {
             this._options = options;
         }
 
@@ -109,7 +108,7 @@ export class RuneLogger {
      * @param options The options to supply to the `pino` logger instance.
      */
     public setOptions(options: LoggerOptions): void {
-        if(!options.timestamp) {
+        if (!options.timestamp) {
             options.timestamp = LOGGER_DEFAULT_TIME_FN;
         }
 
@@ -126,7 +125,7 @@ export class RuneLogger {
     public setPrettyPrint(prettyPrint: boolean): void {
         this.setOptions({
             timestamp: this.loggerTimeFn,
-            prettyPrint
+            prettyPrint,
         });
     }
 
@@ -137,12 +136,12 @@ export class RuneLogger {
      */
     public setTimeFormat(format: TimeFn) {
         this.setOptions({
-            timestamp: format
+            timestamp: format,
         });
     }
 
     private logMessages(consoleType: string, ...args: any[]): void {
-        args.forEach(arg => (this.pinoLogger[consoleType] as any)(arg));
+        args.forEach((arg) => (this.pinoLogger[consoleType] as any)(arg));
     }
 
     private pinoInit(): void {
@@ -156,9 +155,7 @@ export class RuneLogger {
     public get options(): LoggerOptions {
         return this._options;
     }
-
 }
-
 
 /**
  * The main logger singleton instance.

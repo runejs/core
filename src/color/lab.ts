@@ -52,8 +52,11 @@ export class LAB extends LABValues {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { l, a: a2, b: b2 } = LAB.fromRgb(this.rgb);
             lightness = l;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             a = a2;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             b = b2;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = this.rgb.alpha;
         }
 
@@ -74,17 +77,17 @@ export class LAB extends LABValues {
 
         let { r, g, b } = rgb.decimalValues;
 
-        r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-        g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-        b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+        r = r > 0.04045 ? ((r + 0.055) / 1.055) ** 2.4 : r / 12.92;
+        g = g > 0.04045 ? ((g + 0.055) / 1.055) ** 2.4 : g / 12.92;
+        b = b > 0.04045 ? ((b + 0.055) / 1.055) ** 2.4 : b / 12.92;
 
         let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
         let y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.0;
         let z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
 
-        x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116;
-        y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116;
-        z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116;
+        x = x > 0.008856 ? x ** (1 / 3) : 7.787 * x + 16 / 116;
+        y = y > 0.008856 ? y ** (1 / 3) : 7.787 * y + 16 / 116;
+        z = z > 0.008856 ? z ** (1 / 3) : 7.787 * z + 16 / 116;
 
         return {
             l: fixedFloor(116 * y - 16, 1),

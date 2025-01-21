@@ -1,6 +1,6 @@
-import util from 'util';
-import fs, { readFileSync } from 'fs';
-import { join } from 'path';
+import util from 'node:util';
+import fs, { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { logger } from '../logger';
 
 const readdir = util.promisify(fs.readdir);
@@ -64,7 +64,7 @@ export async function* getFiles(
  * @param configurationDir The directory to search for configuration files.
  * @param filter [optional] The file filter to apply to this search.
  */
-export async function loadConfigurationFiles<T = any>(
+export async function loadConfigurationFiles<T>(
     configurationDir: string,
     filter?: FileFilter,
 ): Promise<T[]> {

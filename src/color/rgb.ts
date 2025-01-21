@@ -37,16 +37,20 @@ export class RGB extends RGBValues {
         arg0: number,
         green?: number,
         blue?: number,
-        alpha: number = 255,
+        alpha = 255,
     ) {
         super('rgb');
         let red = arg0;
 
         if (green === undefined && blue === undefined) {
+            // biome-ignore lint/style/noParameterAssign: Legacy
             arg0 >>>= 0;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             blue = arg0 & 0xff;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             green = (arg0 & 0xff00) >>> 8;
             red = (arg0 & 0xff0000) >>> 16;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = (arg0 & 0xff000000) >>> 24;
         }
 
@@ -78,10 +82,10 @@ export class RGB extends RGBValues {
         const { r: r1, g: g1, b: b1 } = this;
         const { r: r2, g: g2, b: b2 } = other;
 
-        const drp2 = Math.pow(r1 - r2, 2),
-            dgp2 = Math.pow(g1 - g2, 2),
-            dbp2 = Math.pow(b1 - b2, 2),
-            t = (r1 + r2) / 2;
+        const drp2 = (r1 - r2) ** 2;
+        const dgp2 = (g1 - g2) ** 2;
+        const dbp2 = (b1 - b2) ** 2;
+        const t = (r1 + r2) / 2;
 
         return Math.sqrt(
             2 * drp2 + 4 * dgp2 + 3 * dbp2 + (t * (drp2 - dbp2)) / 256,

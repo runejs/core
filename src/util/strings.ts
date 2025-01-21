@@ -8,12 +8,8 @@ export interface PadOptions {
 export const pad = (
     value: number,
     paddingAmount: number,
-    options?: PadOptions,
+    options: PadOptions = {},
 ): string => {
-    if (!options) {
-        options = {};
-    }
-
     let { char, direction, fractionDigits, hideEmpties } = options;
     if (char === undefined) {
         char = ' ';

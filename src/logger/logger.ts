@@ -1,5 +1,5 @@
-import pino, { Logger, LoggerOptions, TimeFn } from 'pino';
-import SonicBoom from 'sonic-boom';
+import pino, { type Logger, type LoggerOptions, type TimeFn } from 'pino';
+import type SonicBoom from 'sonic-boom';
 
 export const LOGGER_DEFAULT_TIME_FN: true | TimeFn =
     pino.stdTimeFunctions.isoTime;
@@ -40,6 +40,7 @@ export class RuneLogger {
      * Log at `'log'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public log(...messages: any[]): void {
         this.logMessages('log', ...messages);
     }
@@ -48,6 +49,7 @@ export class RuneLogger {
      * Log at `'info'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public info(...messages: any[]): void {
         this.logMessages('info', ...messages);
     }
@@ -56,6 +58,7 @@ export class RuneLogger {
      * Log at `'debug'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public debug(...messages: any[]): void {
         this.logMessages('debug', ...messages);
     }
@@ -64,6 +67,7 @@ export class RuneLogger {
      * Log at `'warn'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public warn(...messages: any[]): void {
         this.logMessages('warn', ...messages);
     }
@@ -72,6 +76,7 @@ export class RuneLogger {
      * Log at `'error'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public error(...messages: any[]): void {
         this.logMessages('error', ...messages);
     }
@@ -80,6 +85,7 @@ export class RuneLogger {
      * Log at `'trace'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public trace(...messages: any[]): void {
         this.logMessages('trace', ...messages);
     }
@@ -88,6 +94,7 @@ export class RuneLogger {
      * Log at `'fatal'` level the given messages.
      * @param messages The log messages to write.
      */
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     public fatal(...messages: any[]): void {
         this.logMessages('fatal', ...messages);
     }
@@ -140,8 +147,9 @@ export class RuneLogger {
         });
     }
 
+    // biome-ignore lint/suspicious/noExplicitAny: Legacy
     private logMessages(consoleType: string, ...args: any[]): void {
-        args.forEach((arg) => (this.pinoLogger[consoleType] as any)(arg));
+        args.forEach((arg) => this.pinoLogger[consoleType](arg));
     }
 
     private pinoInit(): void {

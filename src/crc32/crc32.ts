@@ -1,5 +1,6 @@
-import { ByteBuffer } from '../buffer';
+import type { ByteBuffer } from '../buffer';
 
+// biome-ignore lint/complexity/noStaticOnlyClass: Legacy
 export class Crc32 {
     public static crcLookupTable: number[] = new Array(256);
 
@@ -12,7 +13,7 @@ export class Crc32 {
 
         for (let currentByte = offset; currentByte < size; currentByte++) {
             const tableIndex = 0xff & (crc ^ data[currentByte]);
-            crc = this.crcLookupTable[tableIndex] ^ (crc >>> 8);
+            crc = Crc32.crcLookupTable[tableIndex] ^ (crc >>> 8);
         }
 
         crc ^= 0xffffffff;
@@ -31,7 +32,7 @@ export class Crc32 {
                 }
             }
 
-            this.crcLookupTable[i] = currentByte;
+            Crc32.crcLookupTable[i] = currentByte;
         }
     }
 }

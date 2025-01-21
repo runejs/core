@@ -1,22 +1,22 @@
 import { SocketServer } from './net';
 import { ByteBuffer } from './buffer';
 import { logger } from './index';
-import { Socket } from 'net';
+import { Socket } from 'node:net';
 
 class TestConnectionHandler extends SocketServer {
     public decodeMessage(data: ByteBuffer): void {
-        logger.info(`Data received:`, data.get('string'));
+        logger.info('Data received:', data.get('string'));
         logger.info(data.get('long').toString());
     }
 
     public initialHandshake(data: ByteBuffer): boolean {
-        logger.info(`Initial handshake:`, data.get('string'));
+        logger.info('Initial handshake:', data.get('string'));
         logger.info(data.get('long').toString());
         return true;
     }
 
     public connectionDestroyed(): void {
-        logger.info(`Connection destroyed.`);
+        logger.info('Connection destroyed.');
     }
 }
 

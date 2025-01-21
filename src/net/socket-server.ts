@@ -1,14 +1,14 @@
-import { createServer, Server, Socket } from 'net';
+import { createServer, type Server, type Socket } from 'node:net';
 import { ByteBuffer } from '../buffer';
 import { logger } from '../logger';
 import { ConnectionStatus } from './connection-status';
 import { setObjectProps } from '../util';
 
 export class SocketServerOptions {
-    public handshakeRequired: boolean = true;
-    public noDelay: boolean = true;
-    public keepAlive: boolean = true;
-    public timeout: number = 30000;
+    public handshakeRequired = true;
+    public noDelay = true;
+    public keepAlive = true;
+    public timeout = 30000;
 
     public constructor(props?: Partial<SocketServerOptions>) {
         setObjectProps<SocketServerOptions>(this, props);
@@ -66,7 +66,7 @@ export abstract class SocketServer<T = undefined> {
         socket.on('error', (error) => this.error(error));
     }
 
-    public static launch<T extends SocketServer<any>>(
+    public static launch<T extends SocketServer>(
         serverName: string,
         hostName: string,
         port: number,
@@ -98,7 +98,7 @@ export abstract class SocketServer<T = undefined> {
             if (this.initialHandshake(byteBuffer)) {
                 this._connectionStatus = ConnectionStatus.ACTIVE;
             } else {
-                logger.warn(`Initial client handshake failed.`);
+                logger.warn('Initial client handshake failed.');
             }
         } else {
             this.decodeMessage(byteBuffer);
@@ -117,26 +117,27 @@ export abstract class SocketServer<T = undefined> {
     public error(error: Error): void;
     public error(error: { message?: string }): void;
     public error(error: string): void;
-    public error(error: any | Error | { message?: string } | string): void;
-    public error(error: any | Error | { message?: string } | string): void {
-        if (error && typeof error === 'string') {
-            error = { message: error };
-        }
-
+    public error(error: Error | { message?: string } | string): void;
+    public error(error: Error | { message?: string } | string): void {
         logger.error(
-            'Socket destroyed due to error' + error?.message
-                ? `: ${error.message}`
-                : '.',
+            `Socket destroyed due to error${
+                typeof error === 'string'
+                    ? `: ${error}`
+                    : 'message' in error
+                      ? `: ${error.message}`
+                      : '.'
+            }`,
         );
 
         try {
             this.closeConnection();
         } catch (closeConnectionError) {
             logger.error(
-                'Error closing server connection' +
+                `Error closing server connection${
                     closeConnectionError?.message
-                    ? `: ${closeConnectionError.message}`
-                    : '.',
+                        ? `: ${closeConnectionError.message}`
+                        : '.'
+                }`,
             );
         }
     }

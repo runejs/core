@@ -11,7 +11,7 @@ export abstract class Color<T> {
     public readonly format: ColorFormat;
     public alpha: number;
 
-    public constructor(format: ColorFormat, alpha: number = 255) {
+    public constructor(format: ColorFormat, alpha = 255) {
         if (!format) {
             throw new Error(`Invalid color format ${format}.`);
         }
@@ -35,7 +35,7 @@ export abstract class Color<T> {
     abstract toString(): string;
 
     public values(colorValues: Partial<T>): T {
-        if (colorValues['alpha']) {
+        if ('alpha' in colorValues && colorValues.alpha) {
             return { ...colorValues, format: this.format } as unknown as T;
         }
         return {

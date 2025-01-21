@@ -1,5 +1,5 @@
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
 
 import { logger } from '../logger';
 import { ByteBuffer } from '../buffer';
@@ -22,6 +22,7 @@ export interface XteaKeys {
 
 const toInt = (value) => value | 0;
 
+// biome-ignore lint/complexity/noStaticOnlyClass: Legacy
 export class Xtea {
     public static loadKeys(xteaConfigPath: string): Map<string, XteaKeys[]> {
         if (!fs.existsSync(xteaConfigPath)) {

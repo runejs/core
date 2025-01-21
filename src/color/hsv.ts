@@ -57,8 +57,11 @@ export class HSV extends HSVValues {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { h, s, v } = HSV.fromRgb(this.rgb);
             hue = h;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             saturation = s;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             value = v;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = this.rgb.alpha;
         }
 

@@ -57,8 +57,11 @@ export class HCL extends HCLValues {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { h, c, l } = HCL.fromRgb(this.rgb);
             hue = h;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             chroma = c;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             luminance = l;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = this.rgb.alpha;
         }
 
@@ -85,7 +88,8 @@ export class HCL extends HCLValues {
 
         const h = rgb.calculateHue();
 
-        let c, l: number;
+        let c: number;
+        let l: number;
 
         if (max === 0) {
             c = 0;

@@ -57,8 +57,11 @@ export class HSL extends HSLValues {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { h, s, l } = HSL.fromRgb(this.rgb);
             hue = h;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             saturation = s;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             lightness = l;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = this.rgb.alpha;
         }
 

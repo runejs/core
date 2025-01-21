@@ -4,6 +4,7 @@ const bzip = compressjs.Bzip2;
 
 const charCode = (letter: string) => letter.charCodeAt(0);
 
+// biome-ignore lint/complexity/noStaticOnlyClass: Legacy
 export class Bzip2 {
     public static compress(rawFileData: ByteBuffer): ByteBuffer {
         const compressedFile = new ByteBuffer(

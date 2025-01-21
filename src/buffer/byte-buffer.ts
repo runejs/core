@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { logger } from '../logger';
 
 export type DataType =
@@ -98,8 +98,8 @@ export class ByteBuffer extends Uint8Array {
         sourceEnd?: number,
     ) => number;
 
-    private _writerIndex: number = 0;
-    private _readerIndex: number = 0;
+    private _writerIndex = 0;
+    private _readerIndex = 0;
     private _bitIndex: number;
 
     public static getType(type: DataType = 'byte'): DataType {
@@ -152,38 +152,42 @@ export class ByteBuffer extends Uint8Array {
         signed: Signedness = 'signed',
         endian: Endianness = 'be',
     ): number | bigint | string {
+        // biome-ignore lint/style/noParameterAssign: Legacy
         type = ByteBuffer.getType(type);
+        // biome-ignore lint/style/noParameterAssign: Legacy
         signed = ByteBuffer.getSignage(signed);
+        // biome-ignore lint/style/noParameterAssign: Legacy
         endian = ByteBuffer.getEndianness(endian);
 
         const readerIndex = this._readerIndex;
 
         if (type === 'smart_short') {
             return this.getSmartShort(readerIndex, signed);
-        } else if (type === 'smart_int') {
+        }
+        if (type === 'smart_int') {
             return this.getSmartInt(readerIndex, signed);
-        } else if (type === 'string') {
+        }
+        if (type === 'string') {
             return this.getString();
-        } else {
-            const size = BYTE_LENGTH[type];
-            const signedChar = signed === 'S' ? '' : 'U';
-            const bitLength = BIT_LENGTH[type];
-            const suffix = type === 'byte' ? '' : endian;
-            const smol = type === 'long' ? 'Big' : '';
+        }
 
-            this._readerIndex += size;
-            const methodName = `read${smol}${signedChar}Int${bitLength}${suffix}`;
+        const size = BYTE_LENGTH[type];
+        const signedChar = signed === 'S' ? '' : 'U';
+        const bitLength = BIT_LENGTH[type];
+        const suffix = type === 'byte' ? '' : endian;
+        const smol = type === 'long' ? 'Big' : '';
 
-            try {
-                if (type === 'long') {
-                    return this[methodName](readerIndex) as bigint;
-                } else {
-                    return this[methodName](readerIndex) as number;
-                }
-            } catch (error) {
-                logger.error(`Error reading ${methodName}:`, error);
-                return null;
+        this._readerIndex += size;
+        const methodName = `read${smol}${signedChar}Int${bitLength}${suffix}`;
+
+        try {
+            if (type === 'long') {
+                return this[methodName](readerIndex) as bigint;
             }
+            return this[methodName](readerIndex) as number;
+        } catch (error) {
+            logger.error(`Error reading ${methodName}:`, error);
+            return null;
         }
     }
 
@@ -208,34 +212,38 @@ export class ByteBuffer extends Uint8Array {
     ): ByteBuffer {
         const writerIndex = this._writerIndex;
 
+        // biome-ignore lint/style/noParameterAssign: Legacy
         type = ByteBuffer.getType(type);
+        // biome-ignore lint/style/noParameterAssign: Legacy
         endian = ByteBuffer.getEndianness(endian);
 
         if (type === 'smart_short') {
             return this.putSmartShort(value as number);
-        } else if (type === 'smart_int') {
+        }
+        if (type === 'smart_int') {
             return this.putSmartInt(value as number);
-        } else if (type === 'string' || typeof value === 'string') {
+        }
+        if (type === 'string' || typeof value === 'string') {
             return this.putString(
                 typeof value !== 'string' ? String(value) : value,
             );
-        } else {
-            const maxSignedLength = MAX_SIGNED_LENGTHS[type];
-            const size = BYTE_LENGTH[type];
-            const signedChar = value > maxSignedLength ? 'U' : '';
-            const lenChars = BIT_LENGTH[type];
-            const suffix = type === 'byte' ? '' : endian;
-            const smol = type === 'long' ? 'Big' : '';
+        }
 
-            this._writerIndex += size;
-            const methodName = `write${signedChar}${smol}Int${lenChars}${suffix}`;
+        const maxSignedLength = MAX_SIGNED_LENGTHS[type];
+        const size = BYTE_LENGTH[type];
+        const signedChar = value > maxSignedLength ? 'U' : '';
+        const lenChars = BIT_LENGTH[type];
+        const suffix = type === 'byte' ? '' : endian;
+        const smol = type === 'long' ? 'Big' : '';
 
-            try {
-                return this[methodName](value, writerIndex);
-            } catch (error) {
-                logger.error(`Error writing ${methodName}:`, error);
-                return null;
-            }
+        this._writerIndex += size;
+        const methodName = `write${signedChar}${smol}Int${lenChars}${suffix}`;
+
+        try {
+            return this[methodName](value, writerIndex);
+        } catch (error) {
+            logger.error(`Error writing ${methodName}:`, error);
+            return null;
         }
     }
 
@@ -313,9 +321,11 @@ export class ByteBuffer extends Uint8Array {
             this[byteIndex] &= ~BIT_MASKS[bitOffset];
             this[byteIndex++] |=
                 (value >> (bitCount - bitOffset)) & BIT_MASKS[bitOffset];
+            // biome-ignore lint/style/noParameterAssign: Legacy
             bitCount -= bitOffset;
         }
 
+        // biome-ignore lint/suspicious/noDoubleEquals: Legacy
         if (bitCount == bitOffset) {
             this[byteIndex] &= ~BIT_MASKS[bitOffset];
             this[byteIndex] |= value & BIT_MASKS[bitOffset];
@@ -349,10 +359,11 @@ export class ByteBuffer extends Uint8Array {
         return newBuffer;
     }
 
-    public getString(terminatingChar: number = 0): string {
+    public getString(terminatingChar = 0): string {
         const bytes: number[] = [];
         let b: number;
 
+        // biome-ignore lint/suspicious/noAssignInExpressions: Legacy
         while ((b = this.get('byte')) !== terminatingChar) {
             bytes.push(b);
         }
@@ -391,11 +402,8 @@ export class ByteBuffer extends Uint8Array {
 
         if (peek < 128) {
             return this.get('byte', 'u') - (signedString === 'S' ? 0 : 64);
-        } else {
-            return (
-                this.get('short', 'u') - (signedString === 'S' ? 32768 : 49152)
-            );
         }
+        return this.get('short', 'u') - (signedString === 'S' ? 32768 : 49152);
     }
 
     public putSmartInt(value: number): ByteBuffer {
@@ -414,11 +422,8 @@ export class ByteBuffer extends Uint8Array {
 
         if (peek < 128) {
             return this.get('short', 'u') - (signedString === 'S' ? 0 : 64);
-        } else {
-            return (
-                this.get('int', 'u') - (signedString === 'S' ? 32768 : 49152)
-            );
         }
+        return this.get('int', 'u') - (signedString === 'S' ? 32768 : 49152);
     }
 
     public clone(): ByteBuffer {

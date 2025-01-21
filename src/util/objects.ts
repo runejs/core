@@ -1,7 +1,7 @@
 export function setObjectProps<T>(
     object: T,
     objectProps: Map<string, unknown> | Partial<T> | undefined,
-    ignoreFieldNameCase: boolean = false,
+    ignoreFieldNameCase = false,
 ): void {
     if (!objectProps) {
         return;
@@ -17,9 +17,9 @@ export function setObjectProps<T>(
         const existingKey = objectKeys.find((k) => {
             if (ignoreFieldNameCase) {
                 return k.toLowerCase() === key.toLowerCase();
-            } else {
-                return k === key;
             }
+
+            return k === key;
         });
 
         if (existingKey) {

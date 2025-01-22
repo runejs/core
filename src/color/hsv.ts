@@ -2,23 +2,18 @@ import { Color, constants } from './color';
 import { RGB } from './rgb';
 import { fixedFloor, pad } from '../util';
 
-
 export abstract class HSVValues extends Color<HSVValues> {
-
     public h: number;
     public s: number;
     public v: number;
 
     abstract toString();
-
 }
-
 
 /**
  * A color within the HSV color space.
  */
 export class HSV extends HSVValues {
-
     /**
      * The RGB equivalent of this color, if provided during instantiation.
      */
@@ -43,17 +38,30 @@ export class HSV extends HSVValues {
      * @param value The color's brightness value.
      * @param alpha [optional] The alpha value of the color, from 0-255. Defaults to 255, fully opaque.
      */
-    public constructor(hue: number, saturation: number, value: number, alpha?: number);
+    public constructor(
+        hue: number,
+        saturation: number,
+        value: number,
+        alpha?: number,
+    );
 
-    public constructor(arg0: number | RGB, saturation?: number, value?: number, alpha = 255) {
+    public constructor(
+        arg0: number | RGB,
+        saturation?: number,
+        value?: number,
+        alpha = 255,
+    ) {
         super('hsv');
         let hue = arg0;
-        if(saturation === undefined && value === undefined) {
+        if (saturation === undefined && value === undefined) {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { h, s, v } = HSV.fromRgb(this.rgb);
             hue = h;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             saturation = s;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             value = v;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = this.rgb.alpha;
         }
 
@@ -68,8 +76,12 @@ export class HSV extends HSVValues {
      * @param rgb The RGB(A) color to convert into HSV.
      */
     public static fromRgb(rgb: RGB): Partial<HSVValues> {
-        if(rgb.isPureBlack) {
-            return { h: constants.black_hue, s: constants.black_saturation, v: 0 };
+        if (rgb.isPureBlack) {
+            return {
+                h: constants.black_hue,
+                s: constants.black_saturation,
+                v: 0,
+            };
         }
 
         let { max } = rgb;
@@ -80,7 +92,7 @@ export class HSV extends HSVValues {
         const s = rgb.calculateSaturation();
         const v = fixedFloor(max * 100, 0);
 
-        if(h === 0 && s === 0 && v > 0) {
+        if (h === 0 && s === 0 && v > 0) {
             // gray/white
             // h = 60; ???
         }
@@ -97,8 +109,9 @@ export class HSV extends HSVValues {
     }
 
     public toString(): string {
-        return `HSV(A) ( ${pad(this.h, 3)}, ${pad(this.s, 3)}%, ` +
-            `${pad(this.v, 3)}%, ${pad(this.alpha, 3)} )`;
+        return (
+            `HSV(A) ( ${pad(this.h, 3)}, ${pad(this.s, 3)}%, ` +
+            `${pad(this.v, 3)}%, ${pad(this.alpha, 3)} )`
+        );
     }
-
 }

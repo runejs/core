@@ -2,23 +2,18 @@ import { Color, constants } from './color';
 import { RGB } from './rgb';
 import { fixedFloor, pad } from '../util';
 
-
 export abstract class HCLValues extends Color<HCLValues> {
-
     public h: number;
     public c: number;
     public l: number;
 
     abstract toString();
-
 }
-
 
 /**
  * A color within the HCL color space.
  */
 export class HCL extends HCLValues {
-
     /**
      * The RGB equivalent of this color, if provided during instantiation.
      */
@@ -43,17 +38,30 @@ export class HCL extends HCLValues {
      * @param luminance The color's luminance value.
      * @param alpha [optional] The alpha value of the color, from 0-255. Defaults to 255, fully opaque.
      */
-    public constructor(hue: number, chroma: number, luminance: number, alpha?: number);
+    public constructor(
+        hue: number,
+        chroma: number,
+        luminance: number,
+        alpha?: number,
+    );
 
-    public constructor(arg0: number | RGB, chroma?: number, luminance?: number, alpha = 255) {
+    public constructor(
+        arg0: number | RGB,
+        chroma?: number,
+        luminance?: number,
+        alpha = 255,
+    ) {
         super('hcl');
         let hue = arg0;
-        if(chroma === undefined && luminance === undefined) {
+        if (chroma === undefined && luminance === undefined) {
             this.rgb = typeof arg0 === 'number' ? new RGB(arg0) : arg0;
             const { h, c, l } = HCL.fromRgb(this.rgb);
             hue = h;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             chroma = c;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             luminance = l;
+            // biome-ignore lint/style/noParameterAssign: Legacy
             alpha = this.rgb.alpha;
         }
 
@@ -68,7 +76,7 @@ export class HCL extends HCLValues {
      * @param rgb The RGB(A) color to convert into HCL.
      */
     public static fromRgb(rgb: RGB): Partial<HCLValues> {
-        if(rgb.isPureBlack) {
+        if (rgb.isPureBlack) {
             return { h: constants.black_hue, c: 0, l: 0 };
         }
 
@@ -80,25 +88,26 @@ export class HCL extends HCLValues {
 
         const h = rgb.calculateHue();
 
-        let c, l: number;
+        let c: number;
+        let l: number;
 
-        if(max === 0) {
+        if (max === 0) {
             c = 0;
             l = 0;
         } else {
-            const alpha = (min / max) / 100;
+            const alpha = min / max / 100;
             const q = Math.exp(alpha * 3);
             const rg = r - g;
             const gb = g - b;
             const br = b - r;
-            l = ((q * max) + ((1 - q) * min)) / 2;
-            c = q * (Math.abs(rg) + Math.abs(gb) + Math.abs(br)) / 3;
+            l = (q * max + (1 - q) * min) / 2;
+            c = (q * (Math.abs(rg) + Math.abs(gb) + Math.abs(br))) / 3;
         }
 
         return Color.values<HCLValues>({
             h,
             c: fixedFloor(c * 100, 0),
-            l: fixedFloor(l * 100, 0)
+            l: fixedFloor(l * 100, 0),
         });
     }
 
@@ -111,8 +120,9 @@ export class HCL extends HCLValues {
     }
 
     public toString(): string {
-        return `HCL(A) ( ${pad(this.h, 3)}, ${pad(this.c, 3)}%, ` +
-            `${pad(this.l, 3)}%, ${pad(this.alpha, 3)} )`;
+        return (
+            `HCL(A) ( ${pad(this.h, 3)}, ${pad(this.c, 3)}%, ` +
+            `${pad(this.l, 3)}%, ${pad(this.alpha, 3)} )`
+        );
     }
-
 }
